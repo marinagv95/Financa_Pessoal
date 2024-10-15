@@ -3,8 +3,10 @@ package org.example.service;
 import org.example.model.MovimentacaoFinanceira;
 
 import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ProcessadorMovimentacoes implements Processador<MovimentacaoFinanceira> {
 
@@ -17,31 +19,44 @@ public class ProcessadorMovimentacoes implements Processador<MovimentacaoFinance
 
     @Override
     public List<MovimentacaoFinanceira> filtrarPorCategoria(String categoria) {
-        return List.of();
+        return movimentacoes.stream()
+                .filter(m -> m.getCategoria().equalsIgnoreCase(categoria))
+                .collect(Collectors.toList());
     }
 
     @Override
     public BigDecimal calcularTotalDeGasto() {
-        return null;
+        return movimentacoes.stream()
+                .map(MovimentacaoFinanceira::getValor)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     @Override
     public Map<String, BigDecimal> cacularTotalPorCategoria() {
-        return Map.of();
+        return movimentacoes.stream()
+                .collect(Collectors.groupingBy(MovimentacaoFinanceira::getCategoria,
+                        Collectors.mapping(MovimentacaoFinanceira::getValor,
+                                Collectors.reducing(BigDecimal.ZERO, BigDecimal::add))));
     }
 
     @Override
     public Map<String, BigDecimal> cacularTotalPorTipoPagamento() {
-        return Map.of();
+        return movimentacoes.stream()
+                .collect(Collectors.groupingBy(MovimentacaoFinanceira::getTipoPagamento,
+                        Collectors.mapping(MovimentacaoFinanceira::getValor,
+                                Collectors.reducing(BigDecimal.ZERO, BigDecimal::add))));
     }
 
     @Override
     public MovimentacaoFinanceira encontrarMaiorMovimentacao() {
-        return null;
+        return movimentacoes.stream()
+                .max(Comparator.comparing(MovimentacaoFinanceira::getValor))
+                .orElse(null);
     }
 
     @Override
     public BigDecimal calcularMediaDeGastos() {
-        return null;
+        return calcularTotalDeGasto().divide(BigDecimal.valueOf(movimentacoes.size()),
+                BigDecimal.ROUND_HALF_UP);
     }
 }
