@@ -1,4 +1,4 @@
-package org.example.tradutor;
+package org.example.translator;
 
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
@@ -7,6 +7,7 @@ import com.opencsv.exceptions.CsvValidationException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class TradutorCSV {
     private String inputFile = "personal_transactions.csv";
@@ -27,14 +28,9 @@ public class TradutorCSV {
                     writer.writeNext(translatedHeader);
                     isFirstLine = false;
                 } else {
-                    String[] translatedLine = new String[nextLine.length];
-                    translatedLine[0] = Tradutor.traduzir(nextLine[0]);
-                    translatedLine[1] = Tradutor.traduzir(nextLine[1]);
-                    translatedLine[2] = Tradutor.traduzir(nextLine[2]);
-                    translatedLine[3] = Tradutor.traduzir(nextLine[3]);
-                    translatedLine[4] = Tradutor.traduzir(nextLine[4]);
-                    translatedLine[5] = Tradutor.traduzir(nextLine[5]);
-
+                    String[] translatedLine = Arrays.stream(nextLine)
+                            .map(Tradutor::traduzir)
+                            .toArray(String[]::new);
                     writer.writeNext(translatedLine);
                 }
             }

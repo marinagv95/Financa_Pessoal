@@ -1,6 +1,6 @@
 package org.example;
 
-import org.example.tradutor.TradutorCSV;
+import org.example.translator.TradutorCSV;
 
 public class Main {
     public static void main(String[] args) {

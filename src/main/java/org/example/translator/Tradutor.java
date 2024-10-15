@@ -1,4 +1,4 @@
-package org.example.tradutor;
+package org.example.translator;
 
 import java.util.HashMap;
 import java.util.Map;
