@@ -32,7 +32,7 @@ public class LeitorCSV {
 
             while ((linha = reader.readNext()) != null) {
                 linhaIndex++;
-                if (linha.length < 6) {
+                if (linha.length < 5) {
                     System.err.println("Linha inválida na linha " + linhaIndex + ": " + String.join(", ", linha));
                     continue;
                 }
@@ -56,9 +56,8 @@ public class LeitorCSV {
 
                 String tipoPagamento = linha[3];
                 String categoria = linha[4];
-                String tipoConta = linha[5];
 
-                MovimentacaoFinanceira movimentacao = new MovimentacaoFinanceira(data, descricao, valor, tipoPagamento, categoria, tipoConta);
+                MovimentacaoFinanceira movimentacao = new MovimentacaoFinanceira(data, descricao, valor, tipoPagamento, categoria);
                 movimentacoes.add(movimentacao);
             }
         } catch (IOException | CsvValidationException e) {

@@ -32,7 +32,7 @@ public class ProcessadorMovimentacoes implements Processador<MovimentacaoFinance
     }
 
     @Override
-    public Map<String, BigDecimal> cacularTotalPorCategoria() {
+    public Map<String, BigDecimal> calcularTotalPorCategoria() {
         return movimentacoes.stream()
                 .collect(Collectors.groupingBy(MovimentacaoFinanceira::getCategoria,
                         Collectors.mapping(MovimentacaoFinanceira::getValor,
@@ -40,7 +40,7 @@ public class ProcessadorMovimentacoes implements Processador<MovimentacaoFinance
     }
 
     @Override
-    public Map<String, BigDecimal> cacularTotalPorTipoPagamento() {
+    public Map<String, BigDecimal> calcularTotalPorTipoPagamento() {
         return movimentacoes.stream()
                 .collect(Collectors.groupingBy(MovimentacaoFinanceira::getTipoPagamento,
                         Collectors.mapping(MovimentacaoFinanceira::getValor,

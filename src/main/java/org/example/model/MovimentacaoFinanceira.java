@@ -9,16 +9,14 @@ public class MovimentacaoFinanceira {
     private BigDecimal valor;
     private String tipoPagamento;
     private String categoria;
-    private String tipoConta;
 
     public MovimentacaoFinanceira(Date data, String descricao, BigDecimal valor, String tipoPagamento,
-                                  String categoria, String tipoConta) {
+                                  String categoria) {
         this.data = data;
         this.descricao = descricao;
         this.valor = valor;
         this.tipoPagamento = tipoPagamento;
         this.categoria = categoria;
-        this.tipoConta = tipoConta;
     }
 
     public Date getData() {return data;}
@@ -26,5 +24,15 @@ public class MovimentacaoFinanceira {
     public BigDecimal getValor() {return valor;}
     public String getTipoPagamento() {return tipoPagamento;}
     public String getCategoria() {return categoria;}
-    public String getTipoConta() {return tipoConta;}
+
+    @Override
+    public String toString() {
+        return "MovimentacaoFinanceira{" +
+                "data=" + data +
+                ", descricao='" + descricao + '\'' +
+                ", valor=" + valor +
+                ", tipoPagamento='" + tipoPagamento + '\'' +
+                ", categoria='" + categoria + '\'' +
+                '}';
+    }
 }
