@@ -37,12 +37,12 @@ public class Main {
 
         System.out.println("----------------------------------------------------------------");
         System.out.println("Total por Categoria:");
-        processador.cacularTotalPorCategoria().forEach((categoria, total) ->
+        processador.calcularTotalPorCategoria().forEach((categoria, total) ->
                 System.out.println(categoria + ": " + FormatarValor.formatarValor(total)));
 
         System.out.println("----------------------------------------------------------------");
         System.out.println("Total por Tipo de Pagamento:");
-        processador.cacularTotalPorTipoPagamento().forEach((tipoPagamento, total) ->
+        processador.calcularTotalPorTipoPagamento().forEach((tipoPagamento, total) ->
                 System.out.println(tipoPagamento + ": " + FormatarValor.formatarValor(total)));
     }
 }

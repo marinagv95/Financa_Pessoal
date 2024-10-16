@@ -27,4 +27,16 @@ public class MovimentacaoFinanceira {
     public String getTipoPagamento() {return tipoPagamento;}
     public String getCategoria() {return categoria;}
     public String getTipoConta() {return tipoConta;}
+
+    @Override
+    public String toString() {
+        return "MovimentacaoFinanceira{" +
+                "data=" + data +
+                ", descricao='" + descricao + '\'' +
+                ", valor=" + valor +
+                ", tipoPagamento='" + tipoPagamento + '\'' +
+                ", categoria='" + categoria + '\'' +
+                ", tipoConta='" + tipoConta + '\'' +
+                '}';
+    }
 }

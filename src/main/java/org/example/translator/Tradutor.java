@@ -42,9 +42,12 @@ public class Tradutor {
         traducoes.put("Mortgage Payment", "Pagamento da IPTU");
         traducoes.put("debit", "Débito");
         traducoes.put("credit", "Crédito");
-        traducoes.put("Platinum Card", "Cartão Platina");
-        traducoes.put("Silver Card", "Cartão Prateado");
-        traducoes.put("Checking", "Verificando pagamento");
+        traducoes.put("Platinum Card", "Cartão de Crédito");
+        traducoes.put("Silver Card", "Cartão de Débito");
+        traducoes.put("Checking", "Verificando");
+        traducoes.put("Entertainment", "Entretenimento");
+        traducoes.put("Electronics & Software", "Eletrônicos e Software");
+        traducoes.put("Auto Insurance", "Seguro Automóvel");
 
     }
 

@@ -7,8 +7,8 @@ import java.util.Map;
 public interface Processador<T> {
     List<T> filtrarPorCategoria(String categoria);
     BigDecimal calcularTotalDeGasto();
-    Map<String, BigDecimal> cacularTotalPorCategoria();
-    Map<String, BigDecimal> cacularTotalPorTipoPagamento();
+    Map<String, BigDecimal> calcularTotalPorCategoria();
+    Map<String, BigDecimal> calcularTotalPorTipoPagamento();
     T encontrarMaiorMovimentacao();
     BigDecimal calcularMediaDeGastos();
 }
