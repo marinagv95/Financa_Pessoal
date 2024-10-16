@@ -22,18 +22,17 @@ public class TradutorCSV {
             while ((nextLine = reader.readNext()) != null) {
                 if (isFirstLine) {
                     String[] translatedHeader = {
-                            "Data", "Descrição", "Valor", "Pagamento", "Categoria", "Conta"
+                            "Data", "Descrição", "Valor", "Pagamento", "Categoria"
                     };
                     writer.writeNext(translatedHeader);
                     isFirstLine = false;
                 } else {
-                    String[] translatedLine = new String[nextLine.length];
+                    String[] translatedLine = new String[5];
                     translatedLine[0] = nextLine[0];
                     translatedLine[1] = Tradutor.traduzir(nextLine[1]);
                     translatedLine[2] = nextLine[2];
                     translatedLine[3] = Tradutor.traduzir(nextLine[3]);
                     translatedLine[4] = Tradutor.traduzir(nextLine[4]);
-                    translatedLine[5] = Tradutor.traduzir(nextLine[5]);
                     writer.writeNext(translatedLine);
                 }
             }

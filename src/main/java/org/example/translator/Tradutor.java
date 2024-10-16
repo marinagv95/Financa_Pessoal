@@ -48,7 +48,6 @@ public class Tradutor {
         traducoes.put("Entertainment", "Entretenimento");
         traducoes.put("Electronics & Software", "Eletrônicos e Software");
         traducoes.put("Auto Insurance", "Seguro Automóvel");
-
     }
 
     public static String traduzir(String palavra) {
