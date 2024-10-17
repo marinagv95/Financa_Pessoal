@@ -80,7 +80,7 @@ public class GerenciadorCSV {
 
     public void escreverMovimentacoes(List<MovimentacaoFinanceira> movimentacoes, String caminhoArquivo) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(caminhoArquivo))) {
-            writer.write("Data,Descrição,Valor,Tipo de Pagamento,Categoria");
+            writer.write("Data,Descrição,Valor,Pagamento,Categoria");
             writer.newLine();
             for (MovimentacaoFinanceira mov : movimentacoes) {
                 writer.write(sdf.format(mov.getData()) + "," +
@@ -90,8 +90,9 @@ public class GerenciadorCSV {
                         mov.getCategoria());
                 writer.newLine();
             }
+            System.out.println("Arquivo CSV gerado com sucesso: " + caminhoArquivo);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Erro ao gerar o arquivo CSV: " + e.getMessage());
         }
     }
 }
