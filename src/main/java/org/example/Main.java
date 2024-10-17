@@ -3,34 +3,80 @@ package org.example;
 import org.example.model.MovimentacaoFinanceira;
 import org.example.service.GerenciadorCSV;
 import org.example.service.ProcessadorMovimentacoes;
+import org.example.service.LeitorCSV;
+import org.example.translator.TradutorCSV;
+import org.example.util.FormatarValor;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         Scanner scanner = new Scanner(System.in);
-        GerenciadorCSV gerenciadorCSV = new GerenciadorCSV();
-        String caminhoArquivo = "financas_pessoais.csv";  // Caminho do arquivo CSV
-        ProcessadorMovimentacoes processador = new ProcessadorMovimentacoes(gerenciadorCSV.lerMovimentacoes(caminhoArquivo));
+
+        TradutorCSV tradutor = new TradutorCSV();
+        tradutor.traduzirArquivo();
+
+        LeitorCSV leitor = new LeitorCSV("financas_pessoais.csv");
+        List<MovimentacaoFinanceira> movimentacoes = leitor.lerMovimentacoes();
+
+        ProcessadorMovimentacoes processador = new ProcessadorMovimentacoes(movimentacoes);
 
         while (true) {
             System.out.println("Escolha uma opção:");
-            System.out.println("1. Adicionar Movimentação");
-            System.out.println("2. Remover Movimentação");
-            System.out.println("3. Filtrar Movimentações por Data");
-            System.out.println("4. Exportar Relatório");
-            System.out.println("5. Sair");
+            System.out.println("1. Exibir Total de Gastos");
+            System.out.println("2. Exibir Média de Gastos");
+            System.out.println("3. Exibir Maior Movimentação");
+            System.out.println("4. Exibir Total por Categoria");
+            System.out.println("5. Exibir Total por Tipo de Pagamento");
+            System.out.println("6. Adicionar Movimentação");
+            System.out.println("7. Remover Movimentação");
+            System.out.println("8. Exportar todas as Movimentações para CSV");
+            System.out.println("9. Filtrar Movimentações por Data");
+            System.out.println("10. Sair");
 
             int opcao = scanner.nextInt();
-            scanner.nextLine();  // Consumir a nova linha
+            scanner.nextLine();
 
             switch (opcao) {
-                case 1: // Adicionar Movimentação
+                case 1:
+                    BigDecimal totalGastos = processador.calcularTotalDeGasto();
+                    System.out.println("Total de Gastos: " + FormatarValor.formatarValor(totalGastos));
+                    break;
+
+                case 2:
+                    BigDecimal mediaGastos = processador.calcularMediaDeGastos();
+                    System.out.println("Média de Gastos: " + FormatarValor.formatarValor(mediaGastos));
+                    break;
+
+                case 3:
+                    MovimentacaoFinanceira maiorMovimentacao = processador.encontrarMaiorMovimentacao();
+                    if (maiorMovimentacao != null) {
+                        System.out.println("Maior Movimentação: " + maiorMovimentacao.getDescricao() +
+                                " - Valor: " + FormatarValor.formatarValor(maiorMovimentacao.getValor()));
+                    } else {
+                        System.out.println("Nenhuma movimentação encontrada.");
+                    }
+                    break;
+
+                case 4:
+                    System.out.println("Total por Categoria:");
+                    processador.calcularTotalPorCategoria().forEach((categoria, total) ->
+                            System.out.println(categoria + ": " + FormatarValor.formatarValor(total)));
+                    break;
+
+                case 5:
+                    System.out.println("Total por Tipo de Pagamento:");
+                    processador.calcularTotalPorTipoPagamento().forEach((tipoPagamento, total) ->
+                            System.out.println(tipoPagamento + ": " + FormatarValor.formatarValor(total)));
+                    break;
+
+                case 6:
                     try {
                         System.out.println("Digite a data (dd/MM/yyyy): ");
                         String dataStr = scanner.nextLine().trim();
@@ -50,9 +96,9 @@ public class Main {
 
                         MovimentacaoFinanceira novaMovimentacao = new MovimentacaoFinanceira(data, descricao, valor, tipoPagamento, categoria);
 
-                        // Adicionar a movimentação no processador e no CSV
+
                         processador.adicionarMovimentacao(novaMovimentacao);
-                        gerenciadorCSV.adicionarMovimentacaoCSV(novaMovimentacao, caminhoArquivo);
+                        leitor.adicionarMovimentacao(novaMovimentacao);
                         System.out.println("Movimentação adicionada com sucesso!");
 
                     } catch (ParseException e) {
@@ -62,43 +108,50 @@ public class Main {
                     }
                     break;
 
-                case 2: // Remover Movimentação
+                case 7:
                     System.out.println("Digite a descrição da movimentação a ser removida: ");
                     String descricaoRemover = scanner.nextLine().trim();
                     if (processador.removerMovimentacao(descricaoRemover)) {
-                        gerenciadorCSV.removerMovimentacaoCSV(descricaoRemover, caminhoArquivo);
+                        GerenciadorCSV gerenciadorCSV = new GerenciadorCSV();
+                        gerenciadorCSV.escreverMovimentacoes(processador.filtrarPorCategoria(""), "financas_pessoais.csv");
                         System.out.println("Movimentação removida com sucesso!");
                     } else {
                         System.out.println("Movimentação não encontrada.");
                     }
                     break;
 
+                case 8:
+                    GerenciadorCSV gerenciadorCSV = new GerenciadorCSV();
+                    gerenciadorCSV.escreverMovimentacoes(movimentacoes, "todas_movimentacoes.csv");
+                    System.out.println("Arquivo CSV gerado com sucesso: todas_movimentacoes.csv");
+                    break;
 
-                case 3: // Filtrar Movimentações por Data
+                case 9:
                     try {
                         System.out.println("Digite a data inicial (dd/MM/yyyy): ");
-                        Date dataInicial = sdf.parse(scanner.nextLine());
+                        String dataInicialStr = scanner.nextLine().trim();
+                        Date dataInicial = sdf.parse(dataInicialStr);
 
                         System.out.println("Digite a data final (dd/MM/yyyy): ");
-                        Date dataFinal = sdf.parse(scanner.nextLine());
+                        String dataFinalStr = scanner.nextLine().trim();
+                        Date dataFinal = sdf.parse(dataFinalStr);
 
-                        processador.filtrarPorData(dataInicial, dataFinal).forEach(System.out::println);
-
+                        List<MovimentacaoFinanceira> movimentacoesPorData = processador.filtrarPorData(dataInicial, dataFinal);
+                        if (movimentacoesPorData.isEmpty()) {
+                            System.out.println("Nenhuma movimentação encontrada no intervalo de datas fornecido.");
+                        } else {
+                            System.out.println("Movimentações entre " + dataInicialStr + " e " + dataFinalStr + ":");
+                            movimentacoesPorData.forEach(mov ->
+                                    System.out.println(mov.getData() + " - " + mov.getDescricao() + " - " + FormatarValor.formatarValor(mov.getValor()))
+                            );
+                        }
                     } catch (ParseException e) {
-                        System.out.println("Erro ao inserir as datas.");
+                        System.out.println("Erro ao inserir as datas. Verifique o formato (dd/MM/yyyy).");
                     }
                     break;
 
-                case 4: // Exportar Relatório
-                    System.out.println("Gerando relatório em CSV...");
-                    gerenciadorCSV.escreverMovimentacoes(processador.filtrarPorCategoria(""), "new_relatorio_financas.csv");
-                    System.out.println("Relatório gerado com sucesso: new_relatorio_financas.csv");
-                    break;
-
-                case 5: // Sair
+                case 10: // Sair
                     System.out.println("Encerrando o programa.");
-                    // Atualiza o arquivo CSV final com as movimentações
-                    gerenciadorCSV.escreverMovimentacoes(processador.filtrarPorCategoria(""), caminhoArquivo);
                     System.exit(0);
                     break;
 
@@ -106,9 +159,6 @@ public class Main {
                     System.out.println("Opção inválida.");
                     break;
             }
-
-            // Após qualquer operação (adicionar/remover), sempre atualiza o arquivo CSV
-            gerenciadorCSV.escreverMovimentacoes(processador.filtrarPorCategoria(""), caminhoArquivo);
         }
     }
 }

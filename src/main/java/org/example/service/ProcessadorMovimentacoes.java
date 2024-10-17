@@ -18,7 +18,6 @@ public class ProcessadorMovimentacoes implements Processador<MovimentacaoFinance
         this.movimentacoes = movimentacoes;
     }
 
-
     @Override
     public List<MovimentacaoFinanceira> filtrarPorCategoria(String categoria) {
         return movimentacoes.stream()
@@ -61,8 +60,7 @@ public class ProcessadorMovimentacoes implements Processador<MovimentacaoFinance
         if (movimentacoes.isEmpty()) {
             return BigDecimal.ZERO;
         }
-        return calcularTotalDeGasto().divide(BigDecimal.valueOf(movimentacoes.size()),
-                BigDecimal.ROUND_HALF_UP);
+        return calcularTotalDeGasto().divide(BigDecimal.valueOf(movimentacoes.size()), BigDecimal.ROUND_HALF_UP);
     }
 
     @Override

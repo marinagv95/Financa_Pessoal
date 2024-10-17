@@ -13,23 +13,22 @@ public class GerenciadorCSV {
 
     private static final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
-    // Método para ler movimentações de um arquivo CSV
     public List<MovimentacaoFinanceira> lerMovimentacoes(String caminhoArquivo) {
         List<MovimentacaoFinanceira> movimentacoes = new ArrayList<>();
         String linha;
         try (BufferedReader br = new BufferedReader(new FileReader(caminhoArquivo))) {
-            br.readLine(); // Ignora a linha de cabeçalho
+            br.readLine();
             while ((linha = br.readLine()) != null) {
                 String[] dados = linha.split(",");
                 try {
-                    // Remover aspas duplas extras, se existirem
+
                     String dataStr = dados[0].replace("\"", "").trim();
                     MovimentacaoFinanceira mov = new MovimentacaoFinanceira(
-                            sdf.parse(dataStr), // Data
-                            dados[1].replace("\"", "").trim(),  // Descrição
-                            new BigDecimal(dados[2].replace("\"", "").trim()),  // Valor
-                            dados[3].replace("\"", "").trim(),  // Tipo de pagamento
-                            dados[4].replace("\"", "").trim()   // Categoria
+                            sdf.parse(dataStr),
+                            dados[1].replace("\"", "").trim(),
+                            new BigDecimal(dados[2].replace("\"", "").trim()),
+                            dados[3].replace("\"", "").trim(),
+                            dados[4].replace("\"", "").trim()
                     );
                     movimentacoes.add(mov);
                 } catch (ParseException e) {
@@ -43,7 +42,21 @@ public class GerenciadorCSV {
         return movimentacoes;
     }
 
-    // Método para escrever movimentações em um arquivo CSV
+
+    public void adicionarMovimentacaoCSV(MovimentacaoFinanceira movimentacao, String caminhoArquivo) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(caminhoArquivo, true))) {
+            writer.write(sdf.format(movimentacao.getData()) + "," +
+                    movimentacao.getDescricao() + "," +
+                    movimentacao.getValor() + "," +
+                    movimentacao.getTipoPagamento() + "," +
+                    movimentacao.getCategoria());
+            writer.newLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     public void escreverMovimentacoes(List<MovimentacaoFinanceira> movimentacoes, String caminhoArquivo) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(caminhoArquivo))) {
             writer.write("Data,Descrição,Valor,Tipo de Pagamento,Categoria");
@@ -59,20 +72,5 @@ public class GerenciadorCSV {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    // Método para adicionar uma nova movimentação ao CSV
-    public void adicionarMovimentacaoCSV(MovimentacaoFinanceira movimentacao, String caminhoArquivo) {
-        List<MovimentacaoFinanceira> movimentacoes = lerMovimentacoes(caminhoArquivo);
-        movimentacoes.add(movimentacao);
-        escreverMovimentacoes(movimentacoes, caminhoArquivo);
-    }
-
-    // Método para remover uma movimentação do CSV com base na descrição
-    public void removerMovimentacaoCSV(String descricao, String caminhoArquivo) {
-        List<MovimentacaoFinanceira> movimentacoes = lerMovimentacoes(caminhoArquivo);
-        // Remover movimentação pela descrição (ignorando maiúsculas e minúsculas)
-        movimentacoes.removeIf(mov -> mov.getDescricao().equalsIgnoreCase(descricao));
-        escreverMovimentacoes(movimentacoes, caminhoArquivo);
     }
 }

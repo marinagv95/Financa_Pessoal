@@ -24,20 +24,16 @@ public class LeitorCSV {
 
     public List<MovimentacaoFinanceira> lerMovimentacoes() {
         List<MovimentacaoFinanceira> movimentacoes = new ArrayList<>();
-
         try (CSVReader reader = new CSVReader(new FileReader(arquivoCSV))) {
             String[] linha;
             reader.readNext();
-
             int linhaIndex = 2;
-
             while ((linha = reader.readNext()) != null) {
                 linhaIndex++;
                 if (linha.length < 5) {
                     System.err.println("Linha inválida na linha " + linhaIndex + ": " + String.join(", ", linha));
                     continue;
                 }
-
                 Date data;
                 try {
                     data = DataUtil.stringParaData(linha[0]);
@@ -45,7 +41,6 @@ public class LeitorCSV {
                     System.err.println("Erro ao converter a data na linha " + linhaIndex + ": " + linha[0]);
                     continue;
                 }
-
                 String descricao = linha[1];
                 BigDecimal valor;
                 try {
@@ -54,10 +49,8 @@ public class LeitorCSV {
                     System.err.println("Erro ao converter o valor na linha " + linhaIndex + ": " + linha[2]);
                     continue;
                 }
-
                 String tipoPagamento = linha[3];
                 String categoria = linha[4];
-
                 MovimentacaoFinanceira movimentacao = new MovimentacaoFinanceira(data, descricao, valor, tipoPagamento, categoria);
                 movimentacoes.add(movimentacao);
             }
@@ -65,7 +58,6 @@ public class LeitorCSV {
             System.err.println("Erro ao ler o arquivo CSV: " + e.getMessage());
             e.printStackTrace();
         }
-
         return movimentacoes;
     }
 
@@ -85,16 +77,6 @@ public class LeitorCSV {
         }
     }
 
-//    public void removerMovimentacao(String descricao) {
-//        List<MovimentacaoFinanceira> movimentacoes = lerMovimentacoes();
-//        movimentacoes = movimentacoes.stream()
-//                .filter(mov -> !mov.getDescricao().equalsIgnoreCase(descricao))
-//                .collect(Collectors.toList());
-//
-//        reescreverArquivo(movimentacoes);
-//        System.out.println("Movimentação removida com sucesso!");
-//    }
-
     public List<MovimentacaoFinanceira> filtrarPorData(Date dataInicio, Date dataFim) {
         return lerMovimentacoes().stream()
                 .filter(mov -> !mov.getData().before(dataInicio) && !mov.getData().after(dataFim))
@@ -106,7 +88,6 @@ public class LeitorCSV {
         try (CSVWriter writer = new CSVWriter(new FileWriter(arquivoRelatorio))) {
             String[] cabecalho = { "Data", "Descrição", "Valor", "Pagamento", "Categoria" };
             writer.writeNext(cabecalho);
-
             for (MovimentacaoFinanceira mov : movimentacoes) {
                 String[] linha = {
                         DataUtil.dataParaString(mov.getData()),
@@ -123,22 +104,17 @@ public class LeitorCSV {
         }
     }
 
-
     public Map<String, BigDecimal> criarResumoMensal() {
         Map<String, BigDecimal> resumoMensal = new HashMap<>();
         List<MovimentacaoFinanceira> movimentacoes = lerMovimentacoes();
-
         for (MovimentacaoFinanceira mov : movimentacoes) {
             String mesAno = DataUtil.dataParaString(mov.getData());
             resumoMensal.put(mesAno, resumoMensal.getOrDefault(mesAno, BigDecimal.ZERO).add(mov.getValor()));
         }
-
         return resumoMensal;
     }
 
     public void definirOrcamentoMensal(String mesAno, BigDecimal valor) {
-        // Salvar o orçamento em um arquivo separado ou em um banco de dados.
-        // Exemplo básico de gravação em um arquivo CSV.
         try (CSVWriter writer = new CSVWriter(new FileWriter("orcamentos.csv", true))) {
             String[] orcamento = { mesAno, valor.toString() };
             writer.writeNext(orcamento);
@@ -147,32 +123,4 @@ public class LeitorCSV {
             System.err.println("Erro ao definir orçamento: " + e.getMessage());
         }
     }
-
-    private void reescreverArquivo(List<MovimentacaoFinanceira> movimentacoes) {
-        try (CSVWriter writer = new CSVWriter(new FileWriter(arquivoCSV))) {
-            String[] cabecalho = { "Data", "Descrição", "Valor", "Pagamento", "Categoria"};
-            writer.writeNext(cabecalho);
-
-            for (MovimentacaoFinanceira mov : movimentacoes) {
-                String[] linha = {
-                        DataUtil.dataParaString(mov.getData()),
-                        mov.getDescricao(),
-                        mov.getValor().toString(),
-                        mov.getTipoPagamento(),
-                        mov.getCategoria()
-                };
-                writer.writeNext(linha);
-            }
-        } catch (IOException e) {
-            System.err.println("Erro ao reescrever o arquivo CSV: " + e.getMessage());
-        }
-    }
-
-
-
-
-
-
-
-
 }
