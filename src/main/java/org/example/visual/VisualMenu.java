@@ -212,15 +212,7 @@ public class VisualMenu {
     }
 
     private void filtrarMovimentacoesRecorrentes() {
-        Map<String, Long> recorrentes = processador.filtrarRecorrentes();
-
-        if (!recorrentes.isEmpty()) {
-            recorrentes.forEach((descricao, count) -> {
-                System.out.println(descricao + " - Repetições: " + count);
-            });
-        } else {
-            System.out.println("Nenhuma movimentação recorrente encontrada.");
-        }
+        gerenciadorCSV.movimentacoesRecorrentes();
         Menu.aguardarContinuacao(leitura);
     }
 

@@ -123,4 +123,32 @@ public class GerenciadorCSV {
         }
     }
 
+    public void movimentacoesRecorrentes() {
+        Map<String, Long> recorrentes = processadorMovimentacoes.filtrarRecorrentes();
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("movimentacoes_recorrentes.txt"))) {
+            writer.write("Movimentações Recorrentes:");
+            writer.newLine();
+            writer.write("======================================================");
+            writer.newLine();
+            writer.write(String.format("%-40s | %s", "Descrição", "Repetições"));
+            writer.write("\n-------------------------------------------------------");
+            writer.newLine();
+
+            recorrentes.forEach((descricao, count) -> {
+                String linha = String.format("%-40s | %d", descricao, count);
+                try {
+                    writer.write(linha);
+                    writer.newLine();
+                } catch (IOException e) {
+                    System.err.println("Erro ao escrever no arquivo: " + e.getMessage());
+                }
+            });
+            writer.write("-------------------------------------------------------");
+            writer.newLine();
+            System.out.println("Relatório de movimentações recorrentes salvo em movimentacoes_recorrentes.txt!");
+        } catch (IOException e) {
+            System.err.println("Erro ao criar o arquivo TXT: " + e.getMessage());
+        }
+    }
+
 }
