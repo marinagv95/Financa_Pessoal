@@ -22,4 +22,7 @@ public interface Processador<T> {
     boolean removerMovimentacao(Date data, String descricao);
 
     Map<String, Long> filtrarRecorrentes();
+    Map<String, BigDecimal> criarResumoMensal();
+    List<Map.Entry<String, BigDecimal>> ordenarResumoPorMesAno(Map<String, BigDecimal> resumo);
+
 }

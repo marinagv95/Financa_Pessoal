@@ -5,6 +5,9 @@ import org.example.service.GerenciadorCSV;
 import org.example.service.ProcessadorMovimentacoes;
 import org.example.util.FormatarValor;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -63,7 +66,7 @@ public class VisualMenu {
                     removerMovimentacao();
                     break;
                 case 3:
-                    exportarMovimentacoesCSV();
+                    resumoMensal();
                     break;
                 case 4:
                     return;
@@ -241,6 +244,12 @@ public class VisualMenu {
         } else {
             System.out.println("Nenhuma movimentação recorrente encontrada.");
         }
+        Menu.aguardarContinuacao(leitura);
+    }
+
+    private void resumoMensal() {
+        Map<String, BigDecimal> resumo = processador.criarResumoMensal();
+        gerenciadorCSV.gerarResumoMensalCSV(resumo);
         Menu.aguardarContinuacao(leitura);
     }
 

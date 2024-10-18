@@ -97,18 +97,32 @@ public class ProcessadorMovimentacoes implements Processador<MovimentacaoFinance
 
     @Override
     public Map<String, Long> filtrarRecorrentes() {
-        Map<String, Set<String>> agrupadosPorDescricaoEMes = movimentacoes.stream()
+        return movimentacoes.stream()
                 .collect(Collectors.groupingBy(
                         MovimentacaoFinanceira::getDescricao,
-                        Collectors.mapping(
-                                mov -> new SimpleDateFormat("yyyy-MM").format(mov.getData()), // Mapeia para o mês/ano
-                                Collectors.toSet() // Armazena em um conjunto para evitar duplicatas
-                        )
-                ));
+                        Collectors.counting()
+                ))
+                .entrySet().stream()
+                .filter(entry -> entry.getValue() > 15)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
 
-        // Filtra e conta apenas as movimentações que ocorreram em todos os meses de um ano
-        return agrupadosPorDescricaoEMes.entrySet().stream()
-                .filter(entry -> entry.getValue().size() >= 12) // Considera apenas as movimentações que ocorreram em 12 meses
-                .collect(Collectors.toMap(Map.Entry::getKey, entry -> (long) entry.getValue().size()));
+    @Override
+    public Map<String, BigDecimal> criarResumoMensal() {
+        return movimentacoes.stream()
+                .collect(Collectors.groupingBy(
+                        mov -> new SimpleDateFormat("MM/yyyy").format(mov.getData()),
+                        Collectors.reducing(BigDecimal.ZERO, MovimentacaoFinanceira::getValor, BigDecimal::add)
+                ));
+    }
+
+    @Override
+    public List<Map.Entry<String, BigDecimal>> ordenarResumoPorMesAno(Map<String, BigDecimal> resumo) {
+        return resumo.entrySet().stream()
+                .sorted(Comparator.comparing(entry -> {
+                    String[] parts = entry.getKey().split("/");
+                    return String.format("%04d%02d", Integer.parseInt(parts[1]), Integer.parseInt(parts[0]));
+                }))
+                .collect(Collectors.toList());
     }
 }

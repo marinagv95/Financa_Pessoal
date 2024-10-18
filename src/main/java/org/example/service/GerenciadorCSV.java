@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -59,26 +60,6 @@ public class GerenciadorCSV {
         }
     }
 
-    public Map<String, BigDecimal> criarResumoMensal() {
-        return processadorMovimentacoes.resumoMensalPorCategoria()
-                .entrySet()
-                .stream()
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        e -> e.getValue().values().stream().reduce(BigDecimal.ZERO, BigDecimal::add)
-                ));
-    }
-
-    public void definirOrcamentoMensal(String mesAno, BigDecimal valor) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("orcamentos.csv", true))) {
-            writer.write(mesAno + "," + valor);
-            writer.newLine();
-            System.out.println("Orçamento definido com sucesso!");
-        } catch (IOException e) {
-            System.err.println("Erro ao definir orçamento: " + e.getMessage());
-        }
-    }
-
     public boolean escreverMovimentacoes(List<MovimentacaoFinanceira> movimentacoes, String caminhoArquivo) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(caminhoArquivo))) {
             writer.write("Data,Descrição,Valor,Pagamento,Categoria");
@@ -96,6 +77,36 @@ public class GerenciadorCSV {
         } catch (IOException e) {
             System.err.println("Erro ao gerar o arquivo CSV: " + e.getMessage());
             return false;
+        }
+    }
+
+
+    public void gerarResumoMensalCSV(Map<String, BigDecimal> resumo) {
+        if (resumo.isEmpty()) {
+            System.out.println("Não há movimentações para gerar o CSV.");
+            return;
+        }
+        List<Map.Entry<String, BigDecimal>> sortedEntries = processadorMovimentacoes.ordenarResumoPorMesAno(resumo);
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("resumo_mensal.txt"))) {
+            writer.write("MÊS/ANO   | TOTAL GASTOS");
+            writer.newLine();
+            writer.write("---------------------------");
+            writer.newLine();
+
+            for (Map.Entry<String, BigDecimal> entry : sortedEntries) {
+                String mesAno = entry.getKey();
+                String totalFormatado = String.format("%,.2f", entry.getValue()).replace('.', ',');
+                writer.write(String.format("%-10s | %s", mesAno, totalFormatado));
+                writer.newLine();
+            }
+
+            writer.write("---------------------------");
+            writer.newLine();
+
+            System.out.println("Resumo mensal gerado com sucesso em resumo_mensal.txt!");
+        } catch (IOException e) {
+            System.err.println("Erro ao criar o arquivo TXT: " + e.getMessage());
         }
     }
 }
