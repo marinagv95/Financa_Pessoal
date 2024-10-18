@@ -13,11 +13,9 @@ public interface Processador<T> {
     Map<String, BigDecimal> calcularTotalPorCategoria();
     Map<String, BigDecimal> calcularTotalPorTipoPagamento();
     T encontrarMaiorMovimentacao();
-    BigDecimal calcularMediaDeGastos();
 
 
     List<MovimentacaoFinanceira> filtrarPorData(Date dataInicial, Date dataFinal);
-    Map<String, Map<String, BigDecimal>> resumoMensalPorCategoria();
     void adicionarMovimentacao(MovimentacaoFinanceira movimentacao);
     boolean removerMovimentacao(Date data, String descricao);
 

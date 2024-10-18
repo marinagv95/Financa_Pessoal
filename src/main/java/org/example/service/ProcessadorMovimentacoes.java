@@ -55,31 +55,10 @@ public class ProcessadorMovimentacoes implements Processador<MovimentacaoFinance
     }
 
     @Override
-    public BigDecimal calcularMediaDeGastos() {
-        if (movimentacoes.isEmpty()) {
-            return BigDecimal.ZERO;
-        }
-        return calcularTotalDeGasto().divide(BigDecimal.valueOf(movimentacoes.size()),
-                BigDecimal.ROUND_HALF_UP);
-    }
-
-    @Override
     public List<MovimentacaoFinanceira> filtrarPorData(Date dataInicial, Date dataFinal) {
         return movimentacoes.stream()
                 .filter(m -> !m.getData().before(dataInicial) && !m.getData().after(dataFinal))
                 .collect(Collectors.toList());
-    }
-
-    @Override
-    public Map<String, Map<String, BigDecimal>> resumoMensalPorCategoria() {
-        return movimentacoes.stream()
-                .collect(Collectors.groupingBy(
-                        mov -> DataUtil.dataParaString(mov.getData()),
-                        Collectors.groupingBy(
-                                MovimentacaoFinanceira::getCategoria,
-                                Collectors.mapping(MovimentacaoFinanceira::getValor, Collectors.reducing(BigDecimal.ZERO, BigDecimal::add))
-                        )
-                ));
     }
 
     @Override

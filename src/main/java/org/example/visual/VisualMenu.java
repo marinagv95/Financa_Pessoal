@@ -4,10 +4,6 @@ import org.example.model.MovimentacaoFinanceira;
 import org.example.service.GerenciadorCSV;
 import org.example.service.ProcessadorMovimentacoes;
 import org.example.util.FormatarValor;
-
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -66,9 +62,6 @@ public class VisualMenu {
                     removerMovimentacao();
                     break;
                 case 3:
-                    resumoMensal();
-                    break;
-                case 4:
                     return;
                 default:
                     System.out.println("Opção inválida. Tente novamente.");
@@ -85,7 +78,7 @@ public class VisualMenu {
                     exibirTotalDeGastos();
                     break;
                 case 2:
-                    exibirMediaDeGastos();
+                    resumoMensal();
                     break;
                 case 3:
                     exibirMaiorMovimentacao();
@@ -114,12 +107,6 @@ public class VisualMenu {
     private void exibirTotalDeGastos() {
         BigDecimal totalGastos = processador.calcularTotalDeGasto();
         System.out.println("Total de Gastos: " + FormatarValor.formatarValor(totalGastos));
-        Menu.aguardarContinuacao(leitura);
-    }
-
-    private void exibirMediaDeGastos() {
-        BigDecimal mediaGastos = processador.calcularMediaDeGastos();
-        System.out.println("Média de Gastos: " + FormatarValor.formatarValor(mediaGastos));
         Menu.aguardarContinuacao(leitura);
     }
 
@@ -203,12 +190,6 @@ public class VisualMenu {
         }
     }
 
-    private void exportarMovimentacoesCSV() {
-        gerenciadorCSV.escreverMovimentacoes(movimentacoes, "todas_movimentacoes.csv");
-        System.out.println("Arquivo CSV gerado com sucesso: todas_movimentacoes.csv");
-        Menu.aguardarContinuacao(leitura);
-    }
-
     private void filtrarMovimentacoesPorData() {
         try {
             System.out.println("Digite a data inicial (dd/MM/yyyy): ");
@@ -218,16 +199,12 @@ public class VisualMenu {
             System.out.println("Digite a data final (dd/MM/yyyy): ");
             String dataFinalStr = leitura.nextLine().trim();
             Date dataFinal = sdf.parse(dataFinalStr);
-
-            List<MovimentacaoFinanceira> movimentacoesPorData = processador.filtrarPorData(dataInicial, dataFinal);
-            if (movimentacoesPorData.isEmpty()) {
-                System.out.println("Nenhuma movimentação encontrada no intervalo de datas fornecido.");
-            } else {
-                System.out.println("Movimentações entre " + dataInicialStr + " e " + dataFinalStr + ":");
-                movimentacoesPorData.forEach(mov ->
-                        System.out.println(mov.getData() + " - " + mov.getDescricao() + " - " + FormatarValor.formatarValor(mov.getValor()))
-                );
+            if (dataInicial.after(dataFinal)) {
+                System.out.println("A data inicial não pode ser posterior à data final.");
+                return;
             }
+            gerenciadorCSV.gerarRelatorioPorData(dataInicial, dataFinal, dataInicialStr, dataFinalStr);
+
             Menu.aguardarContinuacao(leitura);
         } catch (ParseException e) {
             System.out.println("Erro ao inserir as datas. Verifique o formato (dd/MM/yyyy).");
@@ -249,7 +226,7 @@ public class VisualMenu {
 
     private void resumoMensal() {
         Map<String, BigDecimal> resumo = processador.criarResumoMensal();
-        gerenciadorCSV.gerarResumoMensalCSV(resumo);
+        gerenciadorCSV.gerarResumoMensalTXT(resumo);
         Menu.aguardarContinuacao(leitura);
     }
 
