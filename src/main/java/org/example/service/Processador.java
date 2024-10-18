@@ -19,6 +19,5 @@ public interface Processador<T> {
     List<MovimentacaoFinanceira> filtrarPorData(Date dataInicial, Date dataFinal);
     Map<String, Map<String, BigDecimal>> resumoMensalPorCategoria();
     void adicionarMovimentacao(MovimentacaoFinanceira movimentacao);
-    boolean removerMovimentacao(String descricao);
-
+    boolean removerMovimentacao(Date data, String descricao);
 }

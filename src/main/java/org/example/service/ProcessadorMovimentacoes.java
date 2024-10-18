@@ -90,7 +90,10 @@ public class ProcessadorMovimentacoes implements Processador<MovimentacaoFinance
     }
 
     @Override
-    public boolean removerMovimentacao(String descricao) {
-        return movimentacoes.removeIf(mov -> mov.getDescricao().equalsIgnoreCase(descricao));
+    public boolean removerMovimentacao(Date data, String descricao) {
+        return movimentacoes.removeIf(mov ->
+                mov.getDescricao().equalsIgnoreCase(descricao) &&
+                        mov.getData().equals(data)
+        );
     }
 }
