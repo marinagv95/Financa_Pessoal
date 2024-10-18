@@ -122,10 +122,7 @@ public class VisualMenu {
     }
 
     private void exibirTotalPorCategoria() {
-        System.out.println("Total por Categoria:");
-        processador.calcularTotalPorCategoria().forEach((categoria, total) ->
-                System.out.println(categoria + ": " + FormatarValor.formatarValor(total)));
-
+        gerenciadorCSV.gerarRelatorioTotalPorCategoria();
         Menu.aguardarContinuacao(leitura);
     }
 

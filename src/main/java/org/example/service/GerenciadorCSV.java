@@ -28,11 +28,14 @@ public class GerenciadorCSV {
     public void adicionarMovimentacao(MovimentacaoFinanceira movimentacao) {
         processadorMovimentacoes.adicionarMovimentacao(movimentacao);
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(arquivoCSV, true))) {
-            writer.write(DataUtil.dataParaString(movimentacao.getData()) + "," +
-                    movimentacao.getDescricao() + "," +
-                    movimentacao.getValor() + "," +
-                    movimentacao.getTipoPagamento() + "," +
+            String linha = String.format("\"%s\",\"%s\",\"%.2f\",\"%s\",\"%s\"",
+                    DataUtil.dataParaString(movimentacao.getData()),
+                    movimentacao.getDescricao(),
+                    movimentacao.getValor(),
+                    movimentacao.getTipoPagamento(),
                     movimentacao.getCategoria());
+
+            writer.write(linha);
             writer.newLine();
             System.out.println("Movimentação adicionada com sucesso!");
         } catch (IOException e) {
@@ -146,6 +149,35 @@ public class GerenciadorCSV {
             writer.write("-------------------------------------------------------");
             writer.newLine();
             System.out.println("Relatório de movimentações recorrentes salvo em movimentacoes_recorrentes.txt!");
+        } catch (IOException e) {
+            System.err.println("Erro ao criar o arquivo TXT: " + e.getMessage());
+        }
+    }
+
+    public void gerarRelatorioTotalPorCategoria() {
+        Map<String, BigDecimal> totalPorCategoria = processadorMovimentacoes.calcularTotalPorCategoria();
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("total_por_categoria.txt"))) {
+            writer.write("Relatório de Total por Categoria:");
+            writer.newLine();
+            writer.write("============================================");
+            writer.newLine();
+
+            writer.write(String.format("%-30s | %-15s", "Categoria", "Total"));
+            writer.newLine();
+            writer.write("------------------------------------------------");
+            writer.newLine();
+
+            for (Map.Entry<String, BigDecimal> entry : totalPorCategoria.entrySet()) {
+                String categoria = entry.getKey();
+                BigDecimal total = entry.getValue();
+                String linha = String.format("%-30s | %-15s", categoria, FormatarValor.formatarValor(total));
+                writer.write(linha);
+                writer.newLine();
+            }
+            writer.write("------------------------------------------------");
+            writer.newLine();
+            System.out.println("Relatório de total por categoria salvo em total_por_categoria.txt!");
         } catch (IOException e) {
             System.err.println("Erro ao criar o arquivo TXT: " + e.getMessage());
         }

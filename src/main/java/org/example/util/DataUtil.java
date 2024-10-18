@@ -5,16 +5,16 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class DataUtil {
-    private static final String DATE_FORMAT = "dd/MM/yyyy";
+    private static final String FORMATO_ENTRADA = "MM/dd/yyyy";
+    private static final String FORMATO_SAIDA = "dd/MM/yyyy";
 
     public static Date stringParaData(String dataString) throws ParseException {
-        SimpleDateFormat format = new SimpleDateFormat(DATE_FORMAT);
-        return format.parse(dataString);
+        SimpleDateFormat formatoEntrada = new SimpleDateFormat(FORMATO_ENTRADA);
+        return formatoEntrada.parse(dataString);
     }
 
     public static String dataParaString(Date data) {
-        SimpleDateFormat format = new SimpleDateFormat(DATE_FORMAT);
-        return format.format(data);
+        SimpleDateFormat formatoSaida = new SimpleDateFormat(FORMATO_SAIDA);
+        return formatoSaida.format(data);
     }
-
 }
