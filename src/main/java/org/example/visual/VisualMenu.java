@@ -10,6 +10,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class VisualMenu {
@@ -96,6 +97,9 @@ public class VisualMenu {
                     filtrarMovimentacoesPorData();
                     break;
                 case 7:
+                    filtrarMovimentacoesRecorrentes();
+                    break;
+                case 8:
                     return;
                 default:
                     System.out.println("Opção inválida. Tente novamente.");
@@ -107,11 +111,13 @@ public class VisualMenu {
     private void exibirTotalDeGastos() {
         BigDecimal totalGastos = processador.calcularTotalDeGasto();
         System.out.println("Total de Gastos: " + FormatarValor.formatarValor(totalGastos));
+        Menu.aguardarContinuacao(leitura);
     }
 
     private void exibirMediaDeGastos() {
         BigDecimal mediaGastos = processador.calcularMediaDeGastos();
         System.out.println("Média de Gastos: " + FormatarValor.formatarValor(mediaGastos));
+        Menu.aguardarContinuacao(leitura);
     }
 
     private void exibirMaiorMovimentacao() {
@@ -122,12 +128,15 @@ public class VisualMenu {
         } else {
             System.out.println("Nenhuma movimentação encontrada.");
         }
+        Menu.aguardarContinuacao(leitura);
     }
 
     private void exibirTotalPorCategoria() {
         System.out.println("Total por Categoria:");
         processador.calcularTotalPorCategoria().forEach((categoria, total) ->
                 System.out.println(categoria + ": " + FormatarValor.formatarValor(total)));
+
+        Menu.aguardarContinuacao(leitura);
     }
 
 
@@ -135,6 +144,8 @@ public class VisualMenu {
         System.out.println("Total por Tipo de Pagamento:");
         processador.calcularTotalPorTipoPagamento().forEach((tipoPagamento, total) ->
                 System.out.println(tipoPagamento + ": " + FormatarValor.formatarValor(total)));
+
+        Menu.aguardarContinuacao(leitura);
     }
 
     private void adicionarMovimentacao() {
@@ -160,7 +171,7 @@ public class VisualMenu {
             gerenciadorCSV.adicionarMovimentacao(novaMovimentacao);
 
             System.out.println("Movimentação adicionada com sucesso!");
-
+            Menu.aguardarContinuacao(leitura);
         } catch (ParseException e) {
             System.err.println("Erro ao inserir a data.");
         } catch (NumberFormatException e) {
@@ -183,6 +194,7 @@ public class VisualMenu {
             } else {
                 System.out.println("Movimentação não encontrada.");
             }
+            Menu.aguardarContinuacao(leitura);
         } catch (ParseException e) {
             System.err.println("Erro ao inserir a data. Verifique o formato (dd/MM/yyyy).");
         }
@@ -191,6 +203,7 @@ public class VisualMenu {
     private void exportarMovimentacoesCSV() {
         gerenciadorCSV.escreverMovimentacoes(movimentacoes, "todas_movimentacoes.csv");
         System.out.println("Arquivo CSV gerado com sucesso: todas_movimentacoes.csv");
+        Menu.aguardarContinuacao(leitura);
     }
 
     private void filtrarMovimentacoesPorData() {
@@ -212,9 +225,23 @@ public class VisualMenu {
                         System.out.println(mov.getData() + " - " + mov.getDescricao() + " - " + FormatarValor.formatarValor(mov.getValor()))
                 );
             }
+            Menu.aguardarContinuacao(leitura);
         } catch (ParseException e) {
             System.out.println("Erro ao inserir as datas. Verifique o formato (dd/MM/yyyy).");
         }
+    }
+
+    private void filtrarMovimentacoesRecorrentes() {
+        Map<String, Long> recorrentes = processador.filtrarRecorrentes();
+
+        if (!recorrentes.isEmpty()) {
+            recorrentes.forEach((descricao, count) -> {
+                System.out.println(descricao + " - Repetições: " + count);
+            });
+        } else {
+            System.out.println("Nenhuma movimentação recorrente encontrada.");
+        }
+        Menu.aguardarContinuacao(leitura);
     }
 
 }

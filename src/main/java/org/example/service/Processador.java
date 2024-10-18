@@ -20,4 +20,6 @@ public interface Processador<T> {
     Map<String, Map<String, BigDecimal>> resumoMensalPorCategoria();
     void adicionarMovimentacao(MovimentacaoFinanceira movimentacao);
     boolean removerMovimentacao(Date data, String descricao);
+
+    Map<String, Long> filtrarRecorrentes();
 }

@@ -4,10 +4,8 @@ import org.example.model.MovimentacaoFinanceira;
 import org.example.util.DataUtil;
 
 import java.math.BigDecimal;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ProcessadorMovimentacoes implements Processador<MovimentacaoFinanceira> {
@@ -95,5 +93,22 @@ public class ProcessadorMovimentacoes implements Processador<MovimentacaoFinance
                 mov.getDescricao().equalsIgnoreCase(descricao) &&
                         mov.getData().equals(data)
         );
+    }
+
+    @Override
+    public Map<String, Long> filtrarRecorrentes() {
+        Map<String, Set<String>> agrupadosPorDescricaoEMes = movimentacoes.stream()
+                .collect(Collectors.groupingBy(
+                        MovimentacaoFinanceira::getDescricao,
+                        Collectors.mapping(
+                                mov -> new SimpleDateFormat("yyyy-MM").format(mov.getData()), // Mapeia para o mês/ano
+                                Collectors.toSet() // Armazena em um conjunto para evitar duplicatas
+                        )
+                ));
+
+        // Filtra e conta apenas as movimentações que ocorreram em todos os meses de um ano
+        return agrupadosPorDescricaoEMes.entrySet().stream()
+                .filter(entry -> entry.getValue().size() >= 12) // Considera apenas as movimentações que ocorreram em 12 meses
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> (long) entry.getValue().size()));
     }
 }

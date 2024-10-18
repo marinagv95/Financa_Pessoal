@@ -36,8 +36,22 @@ public class Menu {
         System.out.println("4. Exibir Total por Categoria");
         System.out.println("5. Exibir Total por Tipo de Pagamento");
         System.out.println("6. Filtrar Movimentações por Data");
-        System.out.println("7. Voltar ao Menu Principal");
+        System.out.println("7. Filtrar Movimentações Recorrentes");
+        System.out.println("8. Voltar ao Menu Principal");
 
         return leitura.nextInt();
+    }
+
+    public static String ler(Scanner entrada, String texto) {
+        if (entrada == null) {
+            System.err.println("Erro: O Scanner está nulo.");
+        }
+        System.out.println(texto);
+        return entrada.nextLine();
+    }
+
+    public static void aguardarContinuacao(Scanner entrada) {
+        System.out.println("\nPressione Enter para continuar...");
+        ler(entrada, "");
     }
 }
