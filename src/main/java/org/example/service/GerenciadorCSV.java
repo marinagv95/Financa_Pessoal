@@ -201,12 +201,13 @@ public class GerenciadorCSV {
             writer.write("Data,Descrição,Valor,Pagamento,Categoria");
             writer.newLine();
             for (MovimentacaoFinanceira mov : movimentacoes) {
+                // Use trim() para remover espaços em branco indesejados
                 writer.write(String.format("%s,%s,%s,%s,%s",
-                        DataUtil.dataParaString(mov.getData()),
-                        mov.getDescricao(),
-                        FormatarValor.formatarValor(mov.getValor()),
-                        mov.getTipoPagamento(),
-                        mov.getCategoria()));
+                        DataUtil.dataParaString(mov.getData()).trim(),
+                        mov.getDescricao().trim(),
+                        FormatarValor.formatarValor(mov.getValor()).trim(),
+                        mov.getTipoPagamento().trim(),
+                        mov.getCategoria().trim()));
                 writer.newLine();
             }
             System.out.println("Arquivo CSV atualizado com sucesso!");
