@@ -13,7 +13,11 @@ public class ProcessadorMovimentacoes implements Processador<MovimentacaoFinance
     private List<MovimentacaoFinanceira> movimentacoes;
 
     public ProcessadorMovimentacoes(List<MovimentacaoFinanceira> movimentacoes) {
-        this.movimentacoes = movimentacoes;
+        this.movimentacoes = movimentacoes != null ? movimentacoes : new ArrayList<>();
+    }
+
+    public List<MovimentacaoFinanceira> getMovimentacoes() {
+        return movimentacoes;
     }
 
 

@@ -3,6 +3,7 @@ package org.example.visual;
 import org.example.model.MovimentacaoFinanceira;
 import org.example.service.GerenciadorCSV;
 import org.example.service.ProcessadorMovimentacoes;
+import org.example.util.DataUtil;
 import org.example.util.FormatarValor;
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -170,13 +171,13 @@ public class VisualMenu {
         try {
             System.out.println("Digite a data da movimentação a ser removida (dd/MM/yyyy): ");
             String dataStr = leitura.nextLine().trim();
-            Date data = sdf.parse(dataStr);
+            Date data = DataUtil.stringParaData(dataStr);
 
             System.out.println("Digite a descrição da movimentação a ser removida: ");
             String descricaoRemover = leitura.nextLine().trim();
 
-            if (processador.removerMovimentacao(data, descricaoRemover)) {
-                gerenciadorCSV.escreverMovimentacoes(movimentacoes, "financas_pessoais.csv");
+            if (gerenciadorCSV.removerMovimentacao(data, descricaoRemover)) {
+                gerenciadorCSV.atualizarArquivoCSV();
                 System.out.println("Movimentação removida com sucesso!");
             } else {
                 System.out.println("Movimentação não encontrada.");

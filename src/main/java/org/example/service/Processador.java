@@ -22,5 +22,4 @@ public interface Processador<T> {
     Map<String, Long> filtrarRecorrentes();
     Map<String, BigDecimal> criarResumoMensal();
     List<Map.Entry<String, BigDecimal>> ordenarResumoPorMesAno(Map<String, BigDecimal> resumo);
-
 }

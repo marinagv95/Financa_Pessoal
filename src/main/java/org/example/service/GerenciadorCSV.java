@@ -183,4 +183,35 @@ public class GerenciadorCSV {
         }
     }
 
+    public boolean removerMovimentacao(Date data, String descricao) {
+        boolean removida = processadorMovimentacoes.removerMovimentacao(data, descricao);
+
+        if (removida) {
+            atualizarArquivoCSV();
+            System.out.println("Movimentação removida com sucesso!");
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void atualizarArquivoCSV() {
+        List<MovimentacaoFinanceira> movimentacoes = processadorMovimentacoes.getMovimentacoes();
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(arquivoCSV))) {
+            writer.write("Data,Descrição,Valor,Pagamento,Categoria");
+            writer.newLine();
+            for (MovimentacaoFinanceira mov : movimentacoes) {
+                writer.write(String.format("%s,%s,%s,%s,%s",
+                        DataUtil.dataParaString(mov.getData()),
+                        mov.getDescricao(),
+                        FormatarValor.formatarValor(mov.getValor()),
+                        mov.getTipoPagamento(),
+                        mov.getCategoria()));
+                writer.newLine();
+            }
+            System.out.println("Arquivo CSV atualizado com sucesso!");
+        } catch (IOException e) {
+            System.err.println("Erro ao atualizar o arquivo CSV: " + e.getMessage());
+        }
+    }
 }
