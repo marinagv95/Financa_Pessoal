@@ -19,9 +19,6 @@ public class MovimentacaoFinanceira {
         this.categoria = categoria;
     }
 
-    public MovimentacaoFinanceira(String dado, String dado1, String dado2, BigDecimal bigDecimal, String dado3) {
-    }
-
     public Date getData() {return data;}
     public String getDescricao() {return descricao;}
     public BigDecimal getValor() {return valor;}
