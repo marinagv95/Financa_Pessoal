@@ -212,15 +212,16 @@ public class GerenciadorCSV {
             writer.write("Data,Descrição,Valor,Pagamento,Categoria");
             writer.newLine();
             for (MovimentacaoFinanceira mov : movimentacoes) {
-                writer.write(String.format("%s,%s,%s,%s,%s",
-                        DataUtil.dataParaString(mov.getData()).trim(),
-                        mov.getDescricao().trim(),
-                        FormatarValor.formatarValor(mov.getValor()).trim(),
-                        mov.getTipoPagamento().trim(),
-                        mov.getCategoria().trim()));
+                String valorFormatado = FormatarValor.formatarValor(mov.getValor()).replace("\u00A0", " ");
+                        writer.write(String.format("%s,%s,%s,%s,%s",
+                                DataUtil.dataParaString(mov.getData()).trim(),
+                                mov.getDescricao().trim(),
+                                valorFormatado.trim(),
+                                mov.getTipoPagamento().trim(),
+                                mov.getCategoria().trim()));
                 writer.newLine();
             }
-            System.out.println("Arquivo CSV atualizado com sucesso!");
+            writer.flush();
         } catch (IOException e) {
             System.err.println("Erro ao atualizar o arquivo CSV: " + e.getMessage());
         }

@@ -178,7 +178,6 @@ public class VisualMenu {
 
             if (gerenciadorCSV.removerMovimentacao(data, descricaoRemover)) {
                 gerenciadorCSV.atualizarArquivoCSV();
-                System.out.println("Movimentação removida com sucesso!");
             } else {
                 System.out.println("Movimentação não encontrada.");
             }
