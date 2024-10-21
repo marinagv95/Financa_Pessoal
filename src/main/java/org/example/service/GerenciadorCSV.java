@@ -100,24 +100,34 @@ public class GerenciadorCSV {
             System.out.println("Nenhuma movimentação encontrada no intervalo de datas fornecido.");
         } else {
             System.out.println("Movimentações entre " + dataInicialStr + " e " + dataFinalStr + ":");
+            System.out.println("-----------------------------------------------------------");
+            System.out.println(String.format("%-12s | %-30s | %s", "Data", "Descrição", "Valor"));
+            System.out.println("-----------------------------------------------------------");
 
             try (BufferedWriter writer = new BufferedWriter(new FileWriter("movimentacoes_por_data.txt"))) {
                 writer.write("Movimentações entre " + dataInicialStr + " e " + dataFinalStr + ":");
                 writer.newLine();
-                writer.write("------------------------------------------");
+                writer.write("-----------------------------------------------------------");
+                writer.newLine();
+                writer.write(String.format("%-12s | %-30s | %s", "Data", "Descrição", "Valor"));
+                writer.newLine();
+                writer.write("-----------------------------------------------------------");
                 writer.newLine();
 
                 for (MovimentacaoFinanceira mov : movimentacoesPorData) {
                     String dataFormatada = new SimpleDateFormat("dd/MM/yyyy").format(mov.getData());
-                    String linha = String.format("%s - %s - %s",
+                    String valorFormatado = FormatarValor.formatarValor(mov.getValor())
+                            .replace("\u00A0", " ").trim();
+                    String linha = String.format("%-12s | %-30s | %s",
                             dataFormatada,
-                            mov.getDescricao(),
-                            FormatarValor.formatarValor(mov.getValor()));
+                            mov.getDescricao().trim(),
+                            valorFormatado);
                     writer.write(linha);
                     writer.newLine();
+                    System.out.println(linha);
                 }
 
-                writer.write("------------------------------------------");
+                writer.write("-----------------------------------------------------------");
                 writer.newLine();
                 System.out.println("Movimentações salvas em movimentacoes_filtradas.txt!");
             } catch (IOException e) {
@@ -138,7 +148,7 @@ public class GerenciadorCSV {
             writer.newLine();
 
             recorrentes.forEach((descricao, count) -> {
-                String linha = String.format("%-40s | %d", descricao, count);
+                String linha = String.format("%-40s | %d", descricao.trim(), count);
                 try {
                     writer.write(linha);
                     writer.newLine();
@@ -171,7 +181,8 @@ public class GerenciadorCSV {
             for (Map.Entry<String, BigDecimal> entry : totalPorCategoria.entrySet()) {
                 String categoria = entry.getKey();
                 BigDecimal total = entry.getValue();
-                String linha = String.format("%-30s | %-15s", categoria, FormatarValor.formatarValor(total));
+                String linha = String.format("%-30s | %-15s", categoria,
+                        FormatarValor.formatarValor(total).replace("\u00A0", ""));
                 writer.write(linha);
                 writer.newLine();
             }
@@ -201,7 +212,6 @@ public class GerenciadorCSV {
             writer.write("Data,Descrição,Valor,Pagamento,Categoria");
             writer.newLine();
             for (MovimentacaoFinanceira mov : movimentacoes) {
-                // Use trim() para remover espaços em branco indesejados
                 writer.write(String.format("%s,%s,%s,%s,%s",
                         DataUtil.dataParaString(mov.getData()).trim(),
                         mov.getDescricao().trim(),
