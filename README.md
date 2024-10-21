@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-# financa-pessoal
-O objetivo é utilizar a manipulação de Streams em arquivos e  aplicar funções de programação funcional como map, filter e reduce para realizar  diversos tipos de processamento nesses dados. 
-=======
 # Finança Pessoal
 
 ## Descrição
@@ -23,7 +19,7 @@ Para utilizar este projeto, clone o repositório e execute a aplicação em seu 
 
 1. *Clone o repositório*:
    bash
-   git clone https://github.com/allanaavila/financa-pessoal.git
+   git clone git@github.com:marinagv95/Financa_Pessoal.git
 2. **Navegue até o diretório do projeto:**
    bash
    cd financa-pessoal
@@ -104,4 +100,4 @@ financa-pessoal/
 
 <a href="https://github.com/marinagv95">
     <img src="https://avatars.githubusercontent.com/marinagv95" alt="Marina Guimarães Vieira" width="100" />
->>>>>>> 542e7ad8e3c6f0a002d9d386a174d6c9b6063fb0
+
