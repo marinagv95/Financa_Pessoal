@@ -3,10 +3,13 @@ package org.example.translator;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 import com.opencsv.exceptions.CsvValidationException;
+import org.example.util.DataUtil;
 
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.ParseException;
+import java.util.Date;
 
 public class TradutorCSV {
     private String inputFile = "personal_transactions.csv";
@@ -28,21 +31,23 @@ public class TradutorCSV {
                     isFirstLine = false;
                 } else {
                     String[] translatedLine = new String[5];
-                    translatedLine[0] = nextLine[0];
+
+                    Date data = DataUtil.stringParaData(nextLine[0]);
+                    translatedLine[0] = DataUtil.dataParaString(data);
                     translatedLine[1] = Tradutor.traduzir(nextLine[1]);
                     translatedLine[2] = nextLine[2];
                     translatedLine[3] = Tradutor.traduzir(nextLine[3]);
                     translatedLine[4] = Tradutor.traduzir(nextLine[4]);
+
                     writer.writeNext(translatedLine);
                 }
             }
             System.out.println("Arquivo traduzido com sucesso!");
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             System.err.println("Erro ao ler ou escrever no arquivo: " + e.getMessage());
             e.printStackTrace();
         } catch (CsvValidationException e) {
-            System.err.println("Erro na validação do CSV: " + e.getMessage());
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 }
